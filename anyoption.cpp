@@ -128,7 +128,11 @@ AnyOption::init(int maxopt, int maxcharopt )
 	hasoptions = false;
 	autousage = false;
 
-	strcpy_s( long_opt_prefix , "--" );
+#if defined(__APPLE__)
+#define strcpy_s(x,y,z) strlcpy(x,z,y)
+#endif
+
+	strcpy_s( long_opt_prefix, strlen(long_opt_prefix) , "--" );
 
 	if( alloc() == false ){
 		cout << endl << "OPTIONS ERROR : Failed allocating memory" ;
@@ -277,7 +281,7 @@ AnyOption::setCommandLongPrefix( char *_prefix )
 		*( _prefix + MAX_LONG_PREFIX_LENGTH ) = '\0'; 
 	}
 
-	strcpy_s (long_opt_prefix,  _prefix);
+	strcpy_s (long_opt_prefix, strlen(long_opt_prefix), _prefix);
 }
 
 void
