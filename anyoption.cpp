@@ -263,9 +263,17 @@ AnyOption::cleanup()
 	free (optcharindex);
 	free (usage);
 	if( values != NULL )
+	{
+		for( int i=0 ; i < g_value_counter ; i++ )
+			free( (void*)(values[i]));
 		free (values);
+	}
 	if( new_argv != NULL )
 		free (new_argv);
+
+	for( int i=0 ; i < argc ; i++ )
+		free( (void*)(argv[i]));
+	free( (void*)argv);
 }
 
 void
@@ -371,7 +379,16 @@ void
 AnyOption::useCommandArgs( int _argc, char **_argv )
 {
 	argc = _argc;
-	argv = _argv;
+
+	argv = new char*[argc];
+	for( int i=0 ; i< argc ; i++ )
+	{
+		const int size = strlen( _argv[i] )+1;
+		argv[i] = new char[size];
+		argv[i][size-1] = '\0';
+		memcpy(argv[i],_argv[i],size-1);
+	}
+
 	command_set = true;
 	appname = argv[0];
 	if(argc > 1) hasoptions = true;
